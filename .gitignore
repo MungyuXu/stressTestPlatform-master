@@ -1,0 +1,16 @@
+# ��Ϊע�� �C ���� Git ����
+# �������� .a ��β���ļ�
+#*.a
+# �� lib.a ����
+#!lib.a
+# ����������Ŀ��Ŀ¼�µ� TODO �ļ��������� subdir/TODO
+#/TODO
+# ���� build/ Ŀ¼�µ������ļ�
+#build/
+.idea/
+target/
+temp/
+# ����� doc/notes.txt �������� doc/server/arch.txt
+#doc/*.txt
+jmeter.log
+*.iml
