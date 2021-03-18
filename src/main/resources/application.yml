@@ -4,7 +4,7 @@ server:
         uri-encoding: UTF-8
         max-threads: 1000
         min-spare-threads: 30
-    port: 8080 # 仅对jar包方式启动有效，或者本地调试
+    port: 8010 # 仅对jar包方式启动有效，或者本地调试
     connection-timeout: 5000
     # stressTestPlatform
     context-path: /renren-fast

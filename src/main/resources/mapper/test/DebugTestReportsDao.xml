@@ -8,7 +8,7 @@
     </select>
 
     <select id="queryList" resultType="io.renren.modules.test.entity.DebugTestReportsEntity" >
-        select * from test_debug_case_reports
+        select * from test_debug_case_reports where add_by = #{add_by}
         <where>
             <if test="caseId != null and caseId.trim() != ''">
                 case_id = #{caseId}

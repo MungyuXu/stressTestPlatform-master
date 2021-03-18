@@ -8,7 +8,7 @@
 	</select>
 
     <select id="queryList" resultType="io.renren.modules.test.entity.StressTestEntity">
-        select * from test_stress_case
+        select * from test_stress_case where add_by = #{add_by}
         <where>
             <if test="caseName != null and caseName.trim() != ''">
                 case_name like concat('%', #{caseName}, '%')

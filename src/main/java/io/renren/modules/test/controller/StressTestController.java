@@ -6,12 +6,14 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.test.entity.StressTestEntity;
 import io.renren.modules.test.entity.StressTestFileEntity;
 import io.renren.modules.test.service.StressTestFileService;
 import io.renren.modules.test.service.StressTestService;
 import io.renren.modules.test.utils.StressTestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +44,9 @@ public class StressTestController {
     @RequestMapping("/list")
     @RequiresPermissions("test:stress:list")
     public R list(@RequestParam Map<String, Object> params) {
+        SysUserEntity sysUserEntity = (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
+        params.put("add_by", sysUserEntity.getEmail());
+
         //查询列表数据
         Query query = new Query(StressTestUtils.filterParms(params));
         List<StressTestEntity> stressTestList = stressTestService.queryList(query);
@@ -74,6 +79,7 @@ public class StressTestController {
     @RequestMapping("/upload")
     @RequiresPermissions("test:stress:upload")
     public R upload(@RequestParam("files") MultipartFile multipartFile, MultipartHttpServletRequest request) {
+        SysUserEntity sysUserEntity = (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
 
         if (multipartFile.isEmpty()) {
             // 为了前端fileinput组件提示使用。
@@ -98,6 +104,7 @@ public class StressTestController {
 
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("originName", originName);
+        query.put("add_by", sysUserEntity.getEmail());
         // fileList中最多有一条记录
         List<StressTestFileEntity> fileList = stressTestFileService.queryList(query);
         //数据库中已经存在同名文件
@@ -126,6 +133,7 @@ public class StressTestController {
             //主节点master会根据stressCase的添加时间及随机数生成唯一的文件夹,用来保存用例文件及参数化文件.
             //从节点slave会默认使用$JMETER_HOME/bin/stressTest 来存储参数化文件
             //master的文件分开放(web页面操作无感知),slave的参数化文件统一放.
+            stressCaseFile.setAddBy(sysUserEntity.getEmail());
             Date caseAddTime = stressCase.getAddTime();
             String caseAddTimeStr = DateUtils.format(caseAddTime, DateUtils.DATE_TIME_PATTERN_4DIR);
             String caseFilePath;
@@ -164,6 +172,8 @@ public class StressTestController {
     @RequestMapping("/save")
     @RequiresPermissions("test:stress:save")
     public R save(@RequestBody StressTestEntity stressTestCase) {
+        SysUserEntity sysUserEntity = (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
+        stressTestCase.setAddBy(sysUserEntity.getEmail().toString());
         ValidatorUtils.validateEntity(stressTestCase);
         // 生成用例时即生成用例的文件夹名，上传附件时才会将此名称落地成为文件夹。
         if (StringUtils.isEmpty(stressTestCase.getCaseDir())) {

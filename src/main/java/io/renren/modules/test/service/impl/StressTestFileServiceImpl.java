@@ -1,6 +1,7 @@
 package io.renren.modules.test.service.impl;
 
 import io.renren.common.exception.RRException;
+import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.test.dao.*;
 import io.renren.modules.test.entity.*;
 import io.renren.modules.test.handler.FileExecuteResultHandler;
@@ -30,6 +31,7 @@ import org.apache.jmeter.services.FileServer;
 import org.apache.jmeter.threads.RemoteThreadsListenerTestElement;
 import org.apache.jmeter.threads.ThreadGroup;
 import org.apache.jorphan.collections.HashTree;
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -350,6 +352,9 @@ public class StressTestFileServiceImpl implements StressTestFileService {
             stressTestReports.setOriginName(reportOirginName);
             stressTestReports.setReportName(jmxDir + File.separator + csvName);
             stressTestReports.setFile(csvFile);
+
+            SysUserEntity sysUserEntity = (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
+            stressTestReports.setAddBy(sysUserEntity.getEmail());
         }
 
         Map map = new HashMap();

@@ -19,7 +19,7 @@
 
     <select id="queryList" resultType="io.renren.modules.test.entity.StressTestFileEntity">
 --         select * from test_stress_case_file where status > -1
-        SELECT t1.*, t2.case_name FROM test_stress_case_file t1, test_stress_case t2 where t1.status > -1 and t1.case_id = t2.case_id
+        SELECT t1.*, t2.case_name FROM test_stress_case_file t1, test_stress_case t2 where t1.status > -1 and t1.case_id = t2.case_id and t1.add_by = #{add_by}
         <if test="caseId != null and caseId.trim() != ''">
             and t1.case_id = #{caseId}
         </if>

@@ -39,7 +39,6 @@ public class Query extends LinkedHashMap<String, Object> {
             this.put("order", SQLFilter.sqlInject(order));
             this.put("sidx", SQLFilter.sqlInject(sidx));
         }
-
     }
 
 
