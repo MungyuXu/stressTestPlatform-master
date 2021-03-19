@@ -20,13 +20,15 @@ import java.util.Map;
 
 /**
  * 角色
- * 
+ *
  * @author chenshun
  * @email sunlightcs@gmail.com
  * @date 2016年9月18日 上午9:45:12
  */
 @Service("sysRoleService")
-public class SysRoleServiceImpl implements SysRoleService {
+public class
+
+SysRoleServiceImpl implements SysRoleService {
 	@Autowired
 	private SysRoleDao sysRoleDao;
 	@Autowired
@@ -56,10 +58,10 @@ public class SysRoleServiceImpl implements SysRoleService {
 	public void save(SysRoleEntity role) {
 		role.setCreateTime(new Date());
 		sysRoleDao.save(role);
-		
+
 		//检查权限是否越权
 		checkPrems(role);
-		
+
 		//保存角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getRoleId(), role.getMenuIdList());
 	}
@@ -68,10 +70,10 @@ public class SysRoleServiceImpl implements SysRoleService {
 	@Transactional
 	public void update(SysRoleEntity role) {
 		sysRoleDao.update(role);
-		
+
 		//检查权限是否越权
 		checkPrems(role);
-		
+
 		//更新角色与菜单关系
 		sysRoleMenuService.saveOrUpdate(role.getRoleId(), role.getMenuIdList());
 	}
@@ -81,7 +83,7 @@ public class SysRoleServiceImpl implements SysRoleService {
 	public void deleteBatch(Long[] roleIds) {
 		sysRoleDao.deleteBatch(roleIds);
 	}
-	
+
 	@Override
 	public List<Long> queryRoleIdList(Long createUserId) {
 		return sysRoleDao.queryRoleIdList(createUserId);
@@ -95,10 +97,10 @@ public class SysRoleServiceImpl implements SysRoleService {
 		if(role.getCreateUserId() == Constant.SUPER_ADMIN){
 			return ;
 		}
-		
+
 		//查询用户所拥有的菜单列表
 		List<Long> menuIdList = sysUserService.queryAllMenuId(role.getCreateUserId());
-		
+
 		//判断是否越权
 		if(!menuIdList.containsAll(role.getMenuIdList())){
 			throw new RRException("不能分配自己所不拥有的权限！");

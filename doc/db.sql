@@ -145,8 +145,6 @@ CREATE TABLE `tb_user` (
 -- 账号：13612345678  密码：admin
 INSERT INTO `tb_user` (`username`, `mobile`, `password`, `create_time`) VALUES ('mark', '13612345678', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', '2017-03-23 22:37:41');
 
-
-
 -- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- 定时任务相关表结构，如果不使用该功能，则不用执行下面SQL -------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -471,3 +469,8 @@ INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('4',
 INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('5', 'MASTER_JMETER_REPLACE_FILE_KEY', 'true', '1', '上传文件时，遇到同名文件是替换还是报错，默认是替换为true');
 INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('6', 'MASTER_JMETER_GENERATE_REPORT_KEY', 'true', '1', 'true:本地web程序进程生成测试报告，可以多线程并发生成。false:使用Jmeter_home中的命令生成测试报告。');
 INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('7', 'SCRIPT_SCHEDULER_DURATION_KEY', 'true', '1', 'true:脚本限时执行生效，具体时间由脚本单独配置，是默认值 false:取消脚本限时执行');
+INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('8', 'INTERNAL_LOGIN_URL', 'https://t-siberia-api.gaodunwangxiao.com/auth/login', '0', '内部账号登陆url, status 0 表示不启用');
+
+--初始化一个角色, 给该角色初始化相关权限
+INSERT INTO  `sys_role` (`role_id`, `role_name`, `remark`, `create_user_id`) values ('2', '测试', '测试', '1');
+INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) values ('2', '31'), ('2', '32'), ('2', '33'), ('2', '34'), ('2', '35'), ('2', '36');
