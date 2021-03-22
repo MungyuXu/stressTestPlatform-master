@@ -92,24 +92,27 @@ public class SysLoginController extends AbstractController {
 
         //调用运维提供的登陆接口
         if (sysConfigService.queryObject((long) 8).getStatus() != 0) { //判断是否启用运维提供的登陆服务
-            ResponseEntity<String> responseEntity = login(form.getUsername(), form.getPassword());
-            if (responseEntity.getStatusCode() != HttpStatus.valueOf(200)) {
-                return R.error("登陆失败");
-            }
+            if (!form.getUsername().equalsIgnoreCase("admin")) {
 
-            JSONObject result;
-            JSONObject resBody = new JSONObject(responseEntity.getBody());
+                ResponseEntity<String> responseEntity = login(form.getUsername(), form.getPassword());
+                if (responseEntity.getStatusCode() != HttpStatus.valueOf(200)) {
+                    return R.error("登陆失败");
+                }
 
-            if (resBody.getInt("status") == 0) {
-                result = resBody.getJSONObject("result");
-            } else {
-                return R.error(resBody.getInt("status"), resBody.getString("message"));
-            }
+                JSONObject result;
+                JSONObject resBody = new JSONObject(responseEntity.getBody());
 
-            //如用户表中无用户信息，将用户信息插入数据库
-            if (user == null) {
-                sysUserService.save(getUserEntity(result, form.getPassword()));
-                user = sysUserService.queryByUserName(form.getUsername());
+                if (resBody.getInt("status") == 0) {
+                    result = resBody.getJSONObject("result");
+                } else {
+                    return R.error(resBody.getInt("status"), resBody.getString("message"));
+                }
+
+                //如用户表中无用户信息，将用户信息插入数据库
+                if (user == null) {
+                    sysUserService.save(getUserEntity(result, form.getPassword()));
+                    user = sysUserService.queryByUserName(form.getUsername());
+                }
             }
         }
 
