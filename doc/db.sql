@@ -471,6 +471,6 @@ INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('6',
 INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('7', 'SCRIPT_SCHEDULER_DURATION_KEY', 'true', '1', 'true:脚本限时执行生效，具体时间由脚本单独配置，是默认值 false:取消脚本限时执行');
 INSERT INTO `sys_config` (`id`, `key`, `value`, `status`, `remark`) VALUES ('8', 'INTERNAL_LOGIN_URL', 'https://t-siberia-api.gaodunwangxiao.com/auth/login', '0', '内部账号登陆url, status 0 表示不启用');
 
---初始化一个角色, 给该角色初始化相关权限
-INSERT INTO  `sys_role` (`role_id`, `role_name`, `remark`, `create_user_id`) values ('2', '测试', '测试', '1');
-INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) values ('2', '31'), ('2', '32'), ('2', '33'), ('2', '34'), ('2', '35'), ('2', '36');
+-- 初始化一个角色, 给该角色初始化相关权限
+INSERT INTO  `sys_role` (`role_id`, `role_name`, `remark`, `create_user_id`) VALUES ('2', '测试', '测试', '1');
+INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES ('2', '31'), ('2', '32'), ('2', '33'), ('2', '34'), ('2', '35'), ('2', '36');

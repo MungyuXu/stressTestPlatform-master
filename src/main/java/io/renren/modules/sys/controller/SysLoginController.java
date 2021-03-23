@@ -167,7 +167,7 @@ public class SysLoginController extends AbstractController {
         sysUserEntity.setPassword(password);
         sysUserEntity.setStatus(1);
         sysUserEntity.setUsername(username);
-        sysUserEntity.setRoleIdList(Arrays.asList((long) 1));
+        sysUserEntity.setRoleIdList(Arrays.asList((long) 2));
         ValidatorUtils.validateEntity(sysUserEntity, AddGroup.class);
         sysUserEntity.setCreateUserId((long) 1);
 
