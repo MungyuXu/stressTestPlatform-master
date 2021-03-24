@@ -85,7 +85,7 @@ public class SSH2Utils {
         Session sess = null;
         try {
             conn.connect();
-            boolean isAuthenticated = conn.authenticateWithPassword(user, password);
+            boolean isAuthenticated = conn.authenticateWithPublicKey(user, password.toCharArray(), null);
             if (isAuthenticated == false){
                 throw new IOException("Authentication failed.执行命令时发生异常");
             }
