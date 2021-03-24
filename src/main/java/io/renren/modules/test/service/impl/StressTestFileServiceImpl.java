@@ -272,6 +272,8 @@ public class StressTestFileServiceImpl implements StressTestFileService {
 
             //给已经删除脚本的测试报告一个提示
             Map<String, Object> params = new HashMap<>();
+            SysUserEntity sysUserEntity = (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
+            params.put("add_by", sysUserEntity.getEmail());
             params.put("fileId", fileId + "");
             List<StressTestReportsEntity> stressTestReportsList = stressTestReportsDao.queryList(params);
             for (StressTestReportsEntity report : stressTestReportsList) {
