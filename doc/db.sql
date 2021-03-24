@@ -378,7 +378,7 @@ CREATE TABLE `test_stress_case` (
   `priority` int COMMENT '优先级用于过滤',
   `case_dir` varchar(200) COMMENT 'master节点保存用例信息的文件夹',
   `add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `add_by` bigint(20) COMMENT '提交用户id',
+  `add_by` varchar(200) COMMENT '提交用户id',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `update_by` bigint(20) COMMENT '修改用户id',
   PRIMARY KEY (`case_id`),
@@ -399,10 +399,10 @@ CREATE TABLE `test_stress_case_file` (
   `debug_status` tinyint NOT NULL DEFAULT 0 COMMENT '状态  0：关闭debug  1：开始debug调试模式',
   `duration` int NOT NULL DEFAULT 3600 COMMENT '期间，执行时间，单位秒，脚本执行多久停止，0代表永远执行',
   `add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `add_by` bigint(20) COMMENT '提交用户id',
+  `add_by` varchar(200) COMMENT '提交用户id',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `update_by` bigint(20) COMMENT '修改用户id',
-  PRIMARY KEY (`file_id`),
+  PRIMARY KEY (`file_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='性能测试用例文件表';
 
 -- 性能测试报告文件表
@@ -416,7 +416,7 @@ CREATE TABLE `test_stress_case_reports` (
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态  0：初始状态  1：正在运行  2：成功执行  3：运行出现异常',
   `remark` varchar(300) COMMENT '描述',
   `add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `add_by` bigint(20) COMMENT '提交用户id',
+  `add_by` varchar(200) COMMENT '提交用户id',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `update_by` bigint(20) COMMENT '修改用户id',
   PRIMARY KEY (`report_id`)
@@ -433,7 +433,7 @@ CREATE TABLE `test_debug_case_reports` (
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态  0：初始状态  1：正在运行  2：成功执行  3：运行出现异常',
   `remark` varchar(300) COMMENT '描述',
   `add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `add_by` bigint(20) COMMENT '提交用户id',
+  `add_by` varchar(200) COMMENT '提交用户id',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `update_by` bigint(20) COMMENT '修改用户id',
   PRIMARY KEY (`report_id`)
@@ -452,7 +452,7 @@ CREATE TABLE `test_stress_slave` (
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态  0：禁用   1：正常',
   `weight` int NOT NULL DEFAULT 100 COMMENT 'slave节点机的权重，取值在1-99999，slave的权重可以大于或者小于master',
   `add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `add_by` bigint(20) COMMENT '提交用户id',
+  `add_by` varchar(200) COMMENT '提交用户id',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `update_by` bigint(20) COMMENT '修改用户id',
   PRIMARY KEY (`slave_id`),
