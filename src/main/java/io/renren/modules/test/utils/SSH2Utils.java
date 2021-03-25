@@ -7,10 +7,7 @@ import ch.ethz.ssh2.StreamGobbler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * Created by zyanycall@gmail.com on 2018/6/15.
@@ -59,13 +56,18 @@ public class SSH2Utils {
         Connection conn = new Connection(host, port);
         try {
             conn.connect();
-            boolean isAuthenticated = conn.authenticateWithPassword(user, password);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("-----BEGIN RSA PRIVATE KEY-----");
+            stringBuilder.append("\n");
+            stringBuilder.append(password.replaceAll("\n", ""));
+            stringBuilder.append("\n");
+            stringBuilder.append("-----END RSA PRIVATE KEY-----");
+            boolean isAuthenticated = conn.authenticateWithPublicKey(user, stringBuilder.toString().toCharArray(), null);
             if (isAuthenticated == false)
                 throw new IOException("Authentication failed.文件scp到数据服务器时发生异常");
             SCPClient client = new SCPClient(conn);
             logger.error("scp文件开始 : " + filePath);
             client.put(filePath, remotePath); //本地文件scp到远程目录
-//            client.get(dataServerDestDir + "00审计.zip", localDir);//远程的文件scp到本地目录
         } catch (IOException e) {
             logger.error("文件scp到数据服务器时发生异常", e);
         } finally {
@@ -85,7 +87,13 @@ public class SSH2Utils {
         Session sess = null;
         try {
             conn.connect();
-            boolean isAuthenticated = conn.authenticateWithPublicKey(user, password.toCharArray(), null);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("-----BEGIN RSA PRIVATE KEY-----");
+            stringBuilder.append("\n");
+            stringBuilder.append(password.replaceAll("\n", ""));
+            stringBuilder.append("\n");
+            stringBuilder.append("-----END RSA PRIVATE KEY-----");
+            boolean isAuthenticated = conn.authenticateWithPublicKey(user, stringBuilder.toString().toCharArray(), null);
             if (isAuthenticated == false){
                 throw new IOException("Authentication failed.执行命令时发生异常");
             }
@@ -100,13 +108,6 @@ public class SSH2Utils {
             // 仅要第一行即可
             // 多行读取对某些命令会有未知原因的卡顿
             returnLine.append(br.readLine());
-
-            //得到脚本运行成功与否的标志 ：0－成功 非0－失败
-//            logger.error("ExitCode: " + sess.getExitStatus());
-
-            //关闭session和connection
-//            sess.close();
-//            conn.close();
             br.close();
         } catch (Exception e) {
             logger.error("文件scp到数据服务器时发生异常", e);
