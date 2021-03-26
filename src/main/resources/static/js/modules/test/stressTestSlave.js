@@ -31,6 +31,23 @@ $(function () {
                 }
             }
         ],
+        caption: "当前激活的线程总数",
+        loadComplete:function() {
+            var totalCount = 0;
+            $.ajax({
+                async: false,
+                type: "GET",
+                url: baseURL + "test/stressSlave/totalThreads",
+                success: function (r) {
+                    if (r.code == 0) {
+                        totalCount = r.threadInfo.availableThread;
+                    } else {
+                        alert.msg('获取已激活线程出错')
+                    }
+                }
+            });
+            $(this).jqGrid("setCaption", "当前可用的线程总数： " + totalCount);          
+        },
         viewrecords: true,
         height: $(window).height() - 150,
         rowNum: 50,

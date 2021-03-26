@@ -5,13 +5,17 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.modules.test.entity.StressTestFileEntity;
 import io.renren.modules.test.entity.StressTestSlaveEntity;
+import io.renren.modules.test.jmeter.JmeterRunEntity;
+import io.renren.modules.test.service.StressTestFileService;
 import io.renren.modules.test.service.StressTestSlaveService;
 import io.renren.modules.test.utils.StressTestUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +30,9 @@ public class StressTestSlaveController {
 
     @Autowired
     private StressTestUtils stressTestUtils;
+
+    @Autowired
+    private StressTestFileService stressTestFileService;
 
     /**
      * 分布式节点列表
@@ -149,5 +156,29 @@ public class StressTestSlaveController {
             stressTestSlaveService.save(copyEntity);
         }
         return R.ok();
+    }
+
+    /**
+     *查询当前并发线程总数
+     */
+    @SysLog("查询并发线程总数")
+    @RequestMapping("/totalThreads")
+    public R totalThreads() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", 1);
+        List<StressTestFileEntity> jobList = stressTestFileService.queryList(map);
+        int totalThread = 0;
+        for (StressTestFileEntity stressTestFileEntity: jobList) {
+            Long fileId = stressTestFileEntity.getFileId();
+            totalThread = totalThread + (int) StressTestUtils.jMeterEntity4file.get(fileId).getNumberOfActiveThreads().get("Active");
+        }
+
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("status", 1);
+        int totalAvailableSlaves = stressTestSlaveService.queryTotal(queryMap);
+        R r = new R();
+        r.put("totalThread", totalAvailableSlaves * 1000);
+        r.put("availableThread", totalAvailableSlaves * 1000 - totalThread);
+        return R.ok().put("threadInfo", r);
     }
 }

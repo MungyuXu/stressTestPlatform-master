@@ -31,6 +31,9 @@
     <select id="queryTotal" resultType="int">
         select count(1) from test_stress_slave
         <where>
+            <if test="status != null">
+                status = #{status}
+            </if>
             <if test="slaveName != null and slaveName.trim() != ''">
                 slave_name like concat('%', #{slaveName}, '%')
             </if>
