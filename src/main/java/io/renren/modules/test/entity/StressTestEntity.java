@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * 压力测试
- * 
+ *
  */
 public class StressTestEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -22,7 +22,7 @@ public class StressTestEntity implements Serializable {
 	 */
 	@NotBlank(message="用例名称不能为空")
 	private String caseName;
-	
+
 	/**
 	 * 所属项目
 	 */
@@ -80,6 +80,19 @@ public class StressTestEntity implements Serializable {
 	 * 更新的时间
 	 */
 	private Date updateTime;
+
+    /**
+     * 邮件接收人列表
+    */
+	private String emailListStr;
+
+	public void setEmailListStr(String str) {
+		this.emailListStr = str;
+	}
+
+	public String getEmailListStr() {
+	    return emailListStr;
+	}
 
 	public Long getCaseId() {
 		return caseId;

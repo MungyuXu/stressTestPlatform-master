@@ -1,6 +1,11 @@
 package io.renren.modules.test.jmeter;
 
+import io.renren.modules.test.entity.StressTestEntity;
+import io.renren.modules.test.entity.StressTestFileEntity;
 import io.renren.modules.test.service.StressTestFileService;
+import io.renren.modules.test.service.StressTestReportsService;
+import io.renren.modules.test.service.StressTestService;
+import io.renren.modules.test.utils.PicUtil;
 import io.renren.modules.test.utils.StressTestUtils;
 import org.apache.jmeter.engine.ClientJMeterEngine;
 import org.apache.jmeter.engine.JMeterEngine;
@@ -12,7 +17,10 @@ import org.apache.jmeter.util.JMeterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,6 +45,10 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
 
     private final StressTestFileService stressTestFileService;
 
+    private final StressTestReportsService stressTestReportsService;
+
+    private final StressTestService stressTestService;
+
     private final Long fileId;
 
     /**
@@ -44,11 +56,13 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
      * @param reportGenerator {@link ReportGenerator}
      */
     public JmeterListenToTest(List<JMeterEngine> engines, ReportGenerator reportGenerator,
-                              StressTestFileService stressTestFileService, Long fileId) {
+                              StressTestFileService stressTestFileService, Long fileId, StressTestService stressTestService, StressTestReportsService stressTestReportsService) {
         this.engines = engines;
         this.reportGenerator = reportGenerator;
         this.stressTestFileService = stressTestFileService;
         this.fileId = fileId;
+        this.stressTestReportsService = stressTestReportsService;
+        this.stressTestService = stressTestService;
     }
 
     @Override
@@ -197,6 +211,37 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
 
         //实际上已经完全停止，则使用立即停止的方式，会打断Jmeter执行的线程
+        sendReport(jmeterRunEntity);
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
+    }
+
+    private void sendReport(JmeterRunEntity jmeterRunEntity) {
+        StressTestFileEntity stressTestFileEntity = jmeterRunEntity.getStressTestFile();
+        StressTestEntity stressTestEntity = stressTestService.queryObject(stressTestFileEntity.getCaseId());
+        String owner = stressTestEntity.getOperator();
+        String emailTile = stressTestFileEntity.getOriginName() + "性能测试结果";
+        String[] receiverList = stressTestEntity.getEmailListStr().replaceAll(" ", "").split(",");
+
+        Long reportId = jmeterRunEntity.getStressTestReports().getReportId();
+        stressTestReportsService.createReport(new Long[]{reportId});
+
+        String reportFilePath = jmeterRunEntity.getStressTestReports().getReportName();
+
+        StressTestUtils stressTestUtils = new StressTestUtils();
+        String basePath = stressTestUtils.getCasePath()  + "\\" + new File(reportFilePath).getPath().replace(".csv", "\\");
+
+        Long start = System.currentTimeMillis();
+        while (!new File(basePath).exists() && System.currentTimeMillis() - start < 600000) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String picPath = basePath + System.currentTimeMillis() + ".png";
+        System.out.println("file:///" + basePath + "index.html");
+        PicUtil.transferHtmlToPic("file:///" + basePath.replace("\\", "/") + "index.html", picPath);
+        stressTestReportsService.sendMailWithPic(picPath, receiverList, emailTile, owner, "");
     }
 }

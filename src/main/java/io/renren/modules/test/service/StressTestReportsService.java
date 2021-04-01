@@ -70,4 +70,5 @@ public interface StressTestReportsService {
 //     */
 //    int updateBatch(Long[] caseIds, int status);
 
+    void sendMailWithPic(String picPath, String[] receiver, String emailTitle, String owner, String result);
 }

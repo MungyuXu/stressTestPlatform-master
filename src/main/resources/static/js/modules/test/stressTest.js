@@ -8,6 +8,7 @@ $(function () {
             {label: '修改时间', name: 'updateTime', width: 90},
             {label: '项目', name: 'project', sortable: false, width: 80},
             {label: '模块', name: 'module', sortable: false, width: 80},
+            {label: '邮件通知', name: 'emailListStr', sortable: false, width: 80},
             {label: '操作人', name: 'operator', sortable: false, width: 60},
             // { label: 'cron表达式 ', name: 'cronExpression', width: 100 },
             { label: '备注', name: 'remark', sortable: false, width: 110 }

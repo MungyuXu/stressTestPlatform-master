@@ -14,6 +14,8 @@ import io.renren.modules.test.jmeter.JmeterStatEntity;
 import io.renren.modules.test.jmeter.engine.LocalStandardJMeterEngine;
 import io.renren.modules.test.jmeter.runner.LocalDistributedRunner;
 import io.renren.modules.test.service.StressTestFileService;
+import io.renren.modules.test.service.StressTestReportsService;
+import io.renren.modules.test.service.StressTestService;
 import io.renren.modules.test.utils.SSH2Utils;
 import io.renren.modules.test.utils.StressTestUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -150,6 +152,12 @@ public class StressTestFileServiceImpl implements StressTestFileService {
 
     @Autowired
     private StressTestUtils stressTestUtils;
+
+    @Autowired
+    private StressTestReportsService stressTestReportsService;
+
+    @Autowired
+    private StressTestService stressTestService;
 
     @Override
     public StressTestFileEntity queryObject(Long fileId) {
@@ -367,10 +375,14 @@ public class StressTestFileServiceImpl implements StressTestFileService {
         // slaveStr用来做脚本是否是分布式执行的判断，不入库。
         stressTestFile.setSlaveStr(slaveStr);
 
-        if (stressTestUtils.isUseJmeterScript()) {
-            excuteJmeterRunByScript(stressTestFile, stressTestReports, map);
-        } else {
-            excuteJmeterRunLocal(stressTestFile, stressTestReports, map);
+        try {
+            if (stressTestUtils.isUseJmeterScript()) {
+                excuteJmeterRunByScript(stressTestFile, stressTestReports, map);
+            } else {
+                excuteJmeterRunLocal(stressTestFile, stressTestReports, map);
+            }
+        } catch (Exception e) {
+            throw e;
         }
 
         //保存文件的执行状态，用于前台提示及后端查看排序。
@@ -517,7 +529,7 @@ public class StressTestFileServiceImpl implements StressTestFileService {
             // engines 为null停止脚本后不会直接停止远程client的JVM进程。
             // reportGenerator 为null停止后脚本后不会直接生成测试报告。
             jmxTree.add(jmxTree.getArray()[0], new JmeterListenToTest(null,
-                    null, this, stressTestFile.getFileId()));
+                    null, this, stressTestFile.getFileId(), stressTestService, stressTestReportsService));
 
             // Used for remote notification of threads start/stop,see BUG 54152
             // Summariser uses this feature to compute correctly number of threads
@@ -554,6 +566,7 @@ public class StressTestFileServiceImpl implements StressTestFileService {
                 LocalDistributedRunner localDistributedRunner = new LocalDistributedRunner();
                 localDistributedRunner.setStdout(System.out); // NOSONAR
                 localDistributedRunner.setStdErr(System.err); // NOSONAR
+
                 try {
                     localDistributedRunner.init(hosts, jmxTree, getSlaveAddrWeight());
                 } catch (RuntimeException e) {

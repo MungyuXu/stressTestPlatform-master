@@ -37,3 +37,14 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
+    mail:
+        host: smtp.exmail.qq.com
+        username: seven.chen@gaodun.com
+        password: f9rj4bkfNEptF8q
+        port: 465
+        properties:
+            mail:
+                smtp:
+                    ssl:
+                        enable: true
+

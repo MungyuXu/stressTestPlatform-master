@@ -381,6 +381,7 @@ CREATE TABLE `test_stress_case` (
   `add_by` varchar(200) COMMENT '提交用户id',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `update_by` bigint(20) COMMENT '修改用户id',
+  `email_list_str` varchar(300) COMMENT '邮件接收人',
   PRIMARY KEY (`case_id`),
   UNIQUE INDEX (`case_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='性能测试用例表';

@@ -1,6 +1,7 @@
 package io.renren.modules.test.service.impl;
 
 import io.renren.common.exception.RRException;
+import io.renren.modules.test.config.EmailConfig;
 import io.renren.modules.test.dao.StressTestReportsDao;
 import io.renren.modules.test.entity.StressTestReportsEntity;
 import io.renren.modules.test.handler.ReportCreateResultHandler;
@@ -14,11 +15,16 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -38,6 +44,12 @@ public class StressTestReportsServiceImpl implements StressTestReportsService {
 
     @Autowired
     private StressTestUtils stressTestUtils;
+
+    @Autowired
+    private JavaMailSenderImpl mailSender;
+
+    @Autowired
+    private EmailConfig emailConfig;
 
     @Override
     public StressTestReportsEntity queryObject(Long reportId) {
@@ -464,5 +476,23 @@ public class StressTestReportsServiceImpl implements StressTestReportsService {
             }
         }
         return posStart;
+    }
+
+    @Override
+    public void sendMailWithPic(String picPath, String[] receiver, String emailTitle, String owner, String result)  {
+        try {
+            MimeMessage mimeMailMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
+            mimeMessageHelper.setFrom(emailConfig.getUsername());
+            mimeMessageHelper.setTo(receiver);
+            mimeMessageHelper.setSubject(emailTitle);
+            mimeMessageHelper.setText("<div>Hi all, <br/>&nbsp&nbsp如下为性能测试报告，请查看！ <br/>&nbsp&nbsp执行人：" +
+                    "" + owner +"<br/>&nbsp&nbsp执行结果：" + result + "<br/><br/><img src=\"cid:pic\"/></div>", true);
+            FileSystemResource res = new FileSystemResource(new File(picPath));
+            mimeMessageHelper.addInline("pic", res);
+            mailSender.send(mimeMailMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

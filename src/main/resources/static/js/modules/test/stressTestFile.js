@@ -25,7 +25,7 @@ $(function () {
             {
                 label: 'Chart监控',
                 name: 'webchartStatus',
-                width: 40,
+                width: 30,
                 sortable: false,
                 formatter: function (value, options, row) {
                     if (!(getExtension(row.originName) && /^(jmx)$/.test(getExtension(row.originName).toLowerCase()))) {
@@ -41,7 +41,7 @@ $(function () {
             {
                 label: '测试报告',
                 name: 'reportStatus',
-                width: 40,
+                width: 30,
                 sortable: false,
                 formatter: function (value, options, row) {
                     if (!(getExtension(row.originName) && /^(jmx)$/.test(getExtension(row.originName).toLowerCase()))) {
@@ -57,7 +57,7 @@ $(function () {
             {
                 label: '调试',
                 name: 'debugStatus',
-                width: 30,
+                width: 20,
                 sortable: false,
                 formatter: function (value, options, row) {
                     if (!(getExtension(row.originName) && /^(jmx)$/.test(getExtension(row.originName).toLowerCase()))) {
@@ -73,11 +73,11 @@ $(function () {
             {
                 label: '持续时间',
                 name: 'duration',
-                width: 45,
+                width: 40,
                 sortable: false
             },
             {
-                label: '状态', name: 'status', width: 45, formatter: function (value, options, row) {
+                label: '状态', name: 'status', width: 40, formatter: function (value, options, row) {
                     if (value === 0) {
                         return '<span class="label label-info">创建成功</span>';
                     } else if (value === 1) {
@@ -93,8 +93,9 @@ $(function () {
                 }
             },
             {
-                label: '执行操作', name: '', width: 70, sortable: false, formatter: function (value, options, row) {
+                label: '执行操作', name: '', width: 100, sortable: false, formatter: function (value, options, row) {
                     var btn = '';
+                    var logBtn = '';
                     if (!(getExtension(row.originName) && /^(jmx)$/.test(getExtension(row.originName).toLowerCase()))) {
                         btn = "<a href='#' class='btn btn-primary' onclick='synchronizeFile(" + row.fileId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;同步文件</a>";
                     } else {
@@ -103,11 +104,12 @@ $(function () {
                         } else {
                             btn = "<a href='#' class='btn btn-primary' onclick='runOnce(" + row.fileId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;启动</a>";
                         }
+                        logBtn = "&nbsp;&nbsp;<a href='#' class='btn btn-primary' onclick='viewLog()' ><i class='fa fa-arrow-circle-right'></i>&nbsp;日志</a>";
                     }
                     // var stopBtn = "<a href='#' class='btn btn-primary' onclick='stop(" + row.fileId + ")' ><i class='fa fa-stop'></i>&nbsp;停止</a>";
                     // var stopNowBtn = "<a href='#' class='btn btn-primary' onclick='stopNow(" + row.fileId + ")' ><i class='fa fa-times-circle'></i>&nbsp;强制停止</a>";
                     var downloadFileBtn = "&nbsp;&nbsp;<a href='" + baseURL + "test/stressFile/downloadFile/" + row.fileId + "' class='btn btn-primary'><i class='fa fa-download'></i>&nbsp;下载</a>";
-                    return btn + downloadFileBtn;
+                    return btn + downloadFileBtn + logBtn;
                 }
             }
         ],
@@ -148,7 +150,8 @@ var vm = new Vue({
         title: null,
         showChart: false,
         showList: true,
-        showEdit: false
+        showEdit: false,
+        showLog: false
     },
     methods: {
         query: function () {
@@ -166,6 +169,7 @@ var vm = new Vue({
             vm.showList = false;
             vm.showChart = false;
             vm.showEdit = true;
+            vm.showLog = false;
             vm.title = "配置";
             if (fileIds.length > 1) {
                 vm.stressTestFile.reportStatus = 0;
@@ -270,6 +274,7 @@ var vm = new Vue({
             vm.showChart = false;
             vm.showList = true;
             vm.showEdit = false;
+            vm.showLog = false;
             var page = $("#jqGrid").jqGrid('getGridParam', 'page');
             $("#jqGrid").jqGrid('setGridParam', {
                 postData: {'caseId': vm.q.caseId},
@@ -289,6 +294,23 @@ var vm = new Vue({
         }
     }
 });
+
+function viewLog() {
+    $.ajax({
+        type: "GET",
+        url: baseURL + "",
+        success: function (r) {
+            if (r.code == 0) {
+                vm.showChart = false;
+                vm.showList = false;
+                vm.showEdit = false;
+                vm.showLog = true
+            } else {
+                alert(r.msg)
+            }
+        }
+    });
+}
 
 function runOnce(fileIds) {
     if (!fileIds) {

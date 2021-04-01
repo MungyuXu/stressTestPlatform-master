@@ -51,7 +51,8 @@
 			`remark`,
 			`priority`,
 			`case_dir`,
-			`add_by`
+			`add_by`,
+		    `email_list_str`
 		)
 		values
 		(
@@ -63,7 +64,8 @@
 			#{remark},
 			#{priority},
 			#{caseDir},
-			#{addBy}
+			#{addBy},
+			#{emailListStr}
 		)
 	</insert>
 
@@ -79,6 +81,7 @@
             <if test="priority != null">`priority` = #{priority},</if>
             <if test="caseDir != null">`case_dir` = #{caseDir},</if>
             <if test="updateBy != null">`update_by` = #{updateBy},</if>
+            <if test="emailListStr != null">`email_list_str` = #{emailListStr},</if>
         </set>
         where case_id = #{caseId}
     </update>

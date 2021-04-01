@@ -113,12 +113,13 @@ public class SysLoginController extends AbstractController {
                     sysUserService.save(getUserEntity(result, form.getPassword()));
                     user = sysUserService.queryByUserName(form.getUsername());
                 }
-            }
-        }
 
-        //检查用户名或密码是否正确
-        if (user == null || !user.getPassword().equals(new Sha256Hash(form.getPassword(), user.getSalt()).toHex())) {
-            return R.error("登陆失败，请检查用户名和密码");
+                //检查用户表中的密码是否与用户输入的一致，不一致则更新
+                if (!user.getPassword().equals(new Sha256Hash(form.getPassword(), user.getSalt()).toHex())) {
+                    sysUserService.update(getUserEntity(result, form.getPassword()));
+                    user = sysUserService.queryByUserName(form.getUsername());
+                }
+            }
         }
 
         //账号锁定
