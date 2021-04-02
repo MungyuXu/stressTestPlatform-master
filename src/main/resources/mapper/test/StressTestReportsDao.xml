@@ -56,7 +56,8 @@
         `report_name`,
         `file_size`,
         `remark`,
-        `add_by`
+        `add_by`,
+        `logPath`
         )
         values
         (
@@ -66,7 +67,8 @@
         #{reportName},
         #{fileSize},
         #{remark},
-        #{addBy}
+        #{addBy},
+        #{logPath}
         )
     </insert>
 
@@ -80,7 +82,8 @@
             <if test="fileSize != null">`file_size` = #{fileSize}, </if>
             <if test="status != null">`status` = #{status}, </if>
             <if test="remark != null">`remark` = #{remark}, </if>
-            <if test="updateBy != null">`update_by` = #{updateBy} </if>
+            <if test="updateBy != null">`update_by` = #{updateBy}, </if>
+            <if test="logPath != null">`log_path` = #{logPath} </if>
         </set>
         where report_id = #{reportId}
     </update>

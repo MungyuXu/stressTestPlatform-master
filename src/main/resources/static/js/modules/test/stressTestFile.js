@@ -104,7 +104,7 @@ $(function () {
                         } else {
                             btn = "<a href='#' class='btn btn-primary' onclick='runOnce(" + row.fileId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;启动</a>";
                         }
-                        logBtn = "&nbsp;&nbsp;<a href='#' class='btn btn-primary' onclick='viewLog()' ><i class='fa fa-arrow-circle-right'></i>&nbsp;日志</a>";
+                        logBtn = "&nbsp;&nbsp;<a href='#' class='btn btn-primary' onclick='viewLog(" + row.fileId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;日志</a>";
                     }
                     // var stopBtn = "<a href='#' class='btn btn-primary' onclick='stop(" + row.fileId + ")' ><i class='fa fa-stop'></i>&nbsp;停止</a>";
                     // var stopNowBtn = "<a href='#' class='btn btn-primary' onclick='stopNow(" + row.fileId + ")' ><i class='fa fa-times-circle'></i>&nbsp;强制停止</a>";
@@ -295,10 +295,10 @@ var vm = new Vue({
     }
 });
 
-function viewLog() {
+function viewLog(fileId) {
     $.ajax({
         type: "GET",
-        url: baseURL + "",
+        url: baseURL + "/test/stressFile//getRunLog/" + fileId,
         success: function (r) {
             if (r.code == 0) {
                 vm.showChart = false;

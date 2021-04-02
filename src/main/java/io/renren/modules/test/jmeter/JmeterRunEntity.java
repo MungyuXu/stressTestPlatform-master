@@ -55,6 +55,25 @@ public class JmeterRunEntity {
      */
     public final static String FINISHED_THREADS = "Finished";
 
+    private Long testStartTime;
+
+    public void setTestStartTime(Long startTime) {
+        this.testStartTime = startTime;
+    }
+
+    public Long getTestStartTime() {
+        return testStartTime;
+    }
+
+    private Long testEndTime;
+
+    public void setTestEndTime(Long endTime) {
+        this.testEndTime = endTime;
+    }
+
+    public Long getTestEndTime() {
+        return testEndTime;
+    }
 
     /**
      * 停止当前脚本的压力引擎

@@ -420,6 +420,7 @@ CREATE TABLE `test_stress_case_reports` (
   `add_by` varchar(200) COMMENT '提交用户id',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `update_by` bigint(20) COMMENT '修改用户id',
+  `log_path` varchar(200) COMMENT 'run log',
   PRIMARY KEY (`report_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='性能测试报告文件表';
 

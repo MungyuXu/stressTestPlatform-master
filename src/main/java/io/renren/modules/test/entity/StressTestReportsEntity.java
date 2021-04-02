@@ -82,6 +82,16 @@ public class StressTestReportsEntity implements Serializable {
      */
     private File file;
 
+    private String logPath;
+
+    public void setLogPath(String logPath) {
+        this.logPath = logPath;
+    }
+
+    public String getLogPath() {
+        return logPath;
+    }
+
     public Long getReportId() {
         return reportId;
     }

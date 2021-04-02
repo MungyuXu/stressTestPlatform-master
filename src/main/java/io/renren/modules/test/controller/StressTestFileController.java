@@ -8,8 +8,10 @@ import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.test.entity.StressTestFileEntity;
+import io.renren.modules.test.entity.StressTestReportsEntity;
 import io.renren.modules.test.jmeter.JmeterStatEntity;
 import io.renren.modules.test.service.StressTestFileService;
+import io.renren.modules.test.service.StressTestReportsService;
 import io.renren.modules.test.utils.StressTestUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -21,8 +23,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +40,9 @@ import java.util.Map;
 public class StressTestFileController {
     @Autowired
     private StressTestFileService stressTestFileService;
+
+    @Autowired
+    private StressTestReportsService stressTestReportsService;
 
     /**
      * 参数化文件，用例文件列表
@@ -189,5 +198,31 @@ public class StressTestFileController {
         } catch (IOException e) {
             throw new RRException("找不到到文件！文件或许被删除！");
         }
+    }
+
+    @SysLog("获取执行日志")
+    @RequestMapping("/getRunLog/{fileId}")
+    public String getRunLog(@PathVariable("fileId") Long fileId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("", fileId);
+        List<StressTestReportsEntity> stressTestReportsEntity = stressTestReportsService.queryList(map);
+        String path = stressTestReportsEntity.get(0).getLogPath();
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            String temp = "";
+            File file = new File(path);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader br = new BufferedReader(fileReader);
+            while ((temp = br.readLine()) != null) {
+                // 拼接换行符
+                sb.append(temp + "\n");
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
     }
 }

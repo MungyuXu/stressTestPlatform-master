@@ -2,9 +2,11 @@ package io.renren.modules.test.jmeter;
 
 import io.renren.modules.test.entity.StressTestEntity;
 import io.renren.modules.test.entity.StressTestFileEntity;
+import io.renren.modules.test.entity.StressTestReportsEntity;
 import io.renren.modules.test.service.StressTestFileService;
 import io.renren.modules.test.service.StressTestReportsService;
 import io.renren.modules.test.service.StressTestService;
+import io.renren.modules.test.utils.LogUtils;
 import io.renren.modules.test.utils.PicUtil;
 import io.renren.modules.test.utils.StressTestUtils;
 import org.apache.jmeter.engine.ClientJMeterEngine;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,6 +96,8 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         checkForRemainingThreads();
         updateEndStatus();
         log.error("... end of run");
+        JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
+        jmeterRunEntity.setTestEndTime(System.currentTimeMillis());
     }
 
     @Override
@@ -104,6 +109,8 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
 
     @Override
     public void testStarted() {
+        JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
+        jmeterRunEntity.setTestStartTime(System.currentTimeMillis());
         if (log.isInfoEnabled()) {
             final long now = System.currentTimeMillis();
             log.info("{} ({})", JMeterUtils.getResString("running_test"), now);//$NON-NLS-1$
@@ -212,6 +219,7 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
 
         //实际上已经完全停止，则使用立即停止的方式，会打断Jmeter执行的线程
         sendReport(jmeterRunEntity);
+        generateRunLog(jmeterRunEntity);
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
     }
 
@@ -243,5 +251,20 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         System.out.println("file:///" + basePath + "index.html");
         PicUtil.transferHtmlToPic("file:///" + basePath.replace("\\", "/") + "index.html", picPath);
         stressTestReportsService.sendMailWithPic(picPath, receiverList, emailTile, owner, "");
+    }
+
+    private void generateRunLog(JmeterRunEntity jmeterRunEntity) {
+        String reportFilePath = jmeterRunEntity.getStressTestReports().getReportName();
+        StressTestUtils stressTestUtils = new StressTestUtils();
+        String basePath = stressTestUtils.getCasePath()  + "\\" + new File(reportFilePath).getPath().replace(".csv", "\\");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String startTime = format.format(jmeterRunEntity.getTestStartTime());
+        String endTime = format.format(jmeterRunEntity.getTestEndTime());
+        String logPath = "/home/seven.chen/pts/renren-fast.log";
+        String newLogPath = basePath + "run.log";
+        LogUtils.getSpecifiedLog(startTime, endTime, logPath, newLogPath);
+
+        StressTestReportsEntity stressTestReportsEntity = jmeterRunEntity.getStressTestReports();
+        stressTestReportsEntity.setLogPath(logPath);
     }
 }
