@@ -1,6 +1,8 @@
 package io.renren.modules.test.utils;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class LogUtils {
 

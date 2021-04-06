@@ -13,6 +13,8 @@ import io.renren.modules.test.jmeter.JmeterStatEntity;
 import io.renren.modules.test.service.StressTestFileService;
 import io.renren.modules.test.service.StressTestReportsService;
 import io.renren.modules.test.utils.StressTestUtils;
+import io.renren.modules.test.utils.WeChatUtils;
+import net.sf.json.JSONObject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,7 +204,7 @@ public class StressTestFileController {
 
     @SysLog("获取执行日志")
     @RequestMapping("/getRunLog/{fileId}")
-    public String getRunLog(@PathVariable("fileId") Long fileId) {
+    public R getRunLog(@PathVariable("fileId") Long fileId) {
         Map<String, Object> map = new HashMap<>();
         map.put("", fileId);
         List<StressTestReportsEntity> stressTestReportsEntity = stressTestReportsService.queryList(map);
@@ -223,6 +225,19 @@ public class StressTestFileController {
             e.printStackTrace();
         }
 
-        return sb.toString();
+        return R.ok().put("logContent", sb.toString());
+    }
+
+    @RequestMapping(value = "/sendMsg", method = RequestMethod.POST)
+    public R sendMsg(@RequestBody JSONObject reqBody) {
+        WeChatUtils weChatUtils = new WeChatUtils();
+
+        try {
+            weChatUtils.sendMessage(reqBody.getString("email"), reqBody.getString("msg"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return R.ok().put("message", "信息推送成功");
     }
 }

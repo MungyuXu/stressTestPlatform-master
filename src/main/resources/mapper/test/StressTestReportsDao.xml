@@ -57,7 +57,7 @@
         `file_size`,
         `remark`,
         `add_by`,
-        `logPath`
+        `log_path`
         )
         values
         (

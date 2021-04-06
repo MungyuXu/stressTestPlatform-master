@@ -151,7 +151,8 @@ var vm = new Vue({
         showChart: false,
         showList: true,
         showEdit: false,
-        showLog: false
+        showLog: false,
+        logContent: ""
     },
     methods: {
         query: function () {
@@ -298,13 +299,14 @@ var vm = new Vue({
 function viewLog(fileId) {
     $.ajax({
         type: "GET",
-        url: baseURL + "/test/stressFile//getRunLog/" + fileId,
+        url: baseURL + "/test/stressFile/getRunLog/" + fileId,
         success: function (r) {
             if (r.code == 0) {
                 vm.showChart = false;
                 vm.showList = false;
                 vm.showEdit = false;
-                vm.showLog = true
+                vm.showLog = true;
+                vm.logContent = r.logContent;
             } else {
                 alert(r.msg)
             }

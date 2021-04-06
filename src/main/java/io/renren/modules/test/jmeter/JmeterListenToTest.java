@@ -9,6 +9,7 @@ import io.renren.modules.test.service.StressTestService;
 import io.renren.modules.test.utils.LogUtils;
 import io.renren.modules.test.utils.PicUtil;
 import io.renren.modules.test.utils.StressTestUtils;
+import io.renren.modules.test.utils.WeChatUtils;
 import org.apache.jmeter.engine.ClientJMeterEngine;
 import org.apache.jmeter.engine.JMeterEngine;
 import org.apache.jmeter.report.dashboard.GenerationException;
@@ -94,10 +95,10 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
             log.error("Error generating the report", e);
         }
         checkForRemainingThreads();
-        updateEndStatus();
-        log.error("... end of run");
         JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
         jmeterRunEntity.setTestEndTime(System.currentTimeMillis());
+        updateEndStatus();
+        log.error("... end of run");
     }
 
     @Override
@@ -218,8 +219,17 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
 
         //实际上已经完全停止，则使用立即停止的方式，会打断Jmeter执行的线程
+
+        //发送邮件通知
         sendReport(jmeterRunEntity);
+
+        //生成执行日志
         generateRunLog(jmeterRunEntity);
+
+        //发送企业微信通知
+        String msg = "请查看性能测试结果：\\nhttps://qa.gaodunwangxiao.com/renren-fast/index.html#modules/test/stressTestReports.html";
+        WeChatUtils weChatUtils = new WeChatUtils();
+        weChatUtils.sendMessage(jmeterRunEntity.getStressTestFile().getAddBy(), msg);
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
     }
 
