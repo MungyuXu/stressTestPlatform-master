@@ -227,7 +227,7 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         generateRunLog(jmeterRunEntity);
 
         //发送企业微信通知
-        String msg = "请查看性能测试结果：\\nhttps://qa.gaodunwangxiao.com/renren-fast/index.html#modules/test/stressTestReports.html";
+        String msg = "请查看性能测试结果：\nhttps://qa.gaodunwangxiao.com/renren-fast/index.html#modules/test/stressTestReports.html";
         WeChatUtils weChatUtils = new WeChatUtils();
         weChatUtils.sendMessage(jmeterRunEntity.getStressTestFile().getAddBy(), msg);
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
@@ -241,7 +241,14 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         String[] receiverList = stressTestEntity.getEmailListStr().replaceAll(" ", "").split(",");
 
         Long reportId = jmeterRunEntity.getStressTestReports().getReportId();
-        stressTestReportsService.createReport(new Long[]{reportId});
+
+        try {
+            stressTestReportsService.createReport(new Long[]{reportId});
+        } catch (Exception e) {
+            log.error("create report failed");
+            e.printStackTrace();
+            return;
+        }
 
         String reportFilePath = jmeterRunEntity.getStressTestReports().getReportName();
 
