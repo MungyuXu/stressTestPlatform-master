@@ -229,15 +229,10 @@ public class StressTestFileController {
     }
 
     @RequestMapping(value = "/sendMsg", method = RequestMethod.POST)
-    public R sendMsg(@RequestBody JSONObject reqBody) {
+    public Object sendMsg(@RequestBody JSONObject reqBody) {
         WeChatUtils weChatUtils = new WeChatUtils();
+        ResponseEntity responseEntity = weChatUtils.sendMessage(reqBody.getString("email"), reqBody.getString("msg"));
 
-        try {
-            weChatUtils.sendMessage(reqBody.getString("email"), reqBody.getString("msg"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return R.ok().put("message", "信息推送成功");
+        return responseEntity.getBody();
     }
 }

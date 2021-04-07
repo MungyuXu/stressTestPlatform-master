@@ -3,17 +3,17 @@ package io.renren.modules.test.utils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-//@Component
 public class WeChatUtils {
 
     private RestTemplate restTemplate = new RestTemplate();
-
     private String accessToken;
+    private static final Logger log = LoggerFactory.getLogger("WeChatUtils.class");
 
     /**
     * 获取accessToken
@@ -102,8 +102,10 @@ public class WeChatUtils {
         return userId;
     }
 
-    //发送消息
-    public void sendMessage(String email, String msg) throws JSONException  {
+    /**
+     *发送压测结束消息给压测发起人
+     **/
+    public ResponseEntity<JSONObject> sendMessage(String email, String msg) throws JSONException  {
         JSONObject textContent = new JSONObject();
         textContent.put("content", msg);
 
@@ -116,6 +118,12 @@ public class WeChatUtils {
 
         String url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="+ accessToken +"";
 
-        restTemplate.postForEntity(url, null, JSONObject.class);
+        HttpEntity<JSONObject> formEntity = new HttpEntity<>(reqBody);
+        ResponseEntity responseEntity = restTemplate.postForEntity(url, formEntity, JSONObject.class);
+
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            log.error("send wechat notification failed due to: " + responseEntity.getBody());
+        }
+        return responseEntity;
     }
 }

@@ -39,8 +39,8 @@ spring:
                         multi-statement-allow: true
     mail:
         host: smtp.exmail.qq.com
-        username: seven.chen@gaodun.com
-        password: f9rj4bkfNEptF8q
+        username: qais@gaodun.com
+        password: Gd2021@qa
         port: 465
         properties:
             mail:
