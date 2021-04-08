@@ -236,8 +236,8 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
     private void sendReport(JmeterRunEntity jmeterRunEntity) {
         StressTestFileEntity stressTestFileEntity = jmeterRunEntity.getStressTestFile();
         StressTestEntity stressTestEntity = stressTestService.queryObject(stressTestFileEntity.getCaseId());
-        String owner = stressTestEntity.getOperator();
-        String emailTile = stressTestFileEntity.getOriginName() + "性能测试结果";
+        String owner = stressTestEntity.getAddBy();
+        String emailTile = stressTestEntity.getCaseName() + "性能测试结果";
         String[] receiverList = stressTestEntity.getEmailListStr().replaceAll(" ", "").split(",");
 
         Long reportId = jmeterRunEntity.getStressTestReports().getReportId();
@@ -253,10 +253,10 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         String reportFilePath = jmeterRunEntity.getStressTestReports().getReportName();
 
         StressTestUtils stressTestUtils = new StressTestUtils();
-        String basePath = stressTestUtils.getCasePath()  + "\\" + new File(reportFilePath).getPath().replace(".csv", "\\");
+        String basePath = stressTestUtils.getCasePath()  + "/" + new File(reportFilePath).getPath().replace(".csv", "/");
 
         Long start = System.currentTimeMillis();
-        while (!new File(basePath).exists() && System.currentTimeMillis() - start < 600000) {
+        while (!new File(basePath).exists() && System.currentTimeMillis() - start < 300000) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -264,9 +264,15 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
             }
         }
 
+        System.out.println("基本路径为：" + basePath);
+        if (!new File(basePath).exists()) {
+            log.error("生成报告失败");
+            return;
+        }
+
         String picPath = basePath + System.currentTimeMillis() + ".png";
-        System.out.println("file:///" + basePath + "index.html");
-        PicUtil.transferHtmlToPic("file:///" + basePath.replace("\\", "/") + "index.html", picPath);
+        System.out.println(basePath.replace("\\", "/") + "index.html");
+        PicUtil.transferHtmlToPic("file:///:" + basePath.replace("\\", "/") + "index.html", picPath);
         stressTestReportsService.sendMailWithPic(picPath, receiverList, emailTile, owner, "");
     }
 
@@ -278,7 +284,8 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         String startTime = format.format(jmeterRunEntity.getTestStartTime());
         String endTime = format.format(jmeterRunEntity.getTestEndTime());
         String logPath = "/home/seven.chen/pts/renren-fast.log";
-        String newLogPath = basePath + "run.log";
+        String newLogPath = basePath.replace("\\", "/") + "run.log";
+        System.out.println("日志路径为" + newLogPath);
         LogUtils.getSpecifiedLog(startTime, endTime, logPath, newLogPath);
 
         StressTestReportsEntity stressTestReportsEntity = jmeterRunEntity.getStressTestReports();
