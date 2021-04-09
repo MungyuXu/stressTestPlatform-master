@@ -41,17 +41,6 @@
         <table id="jqGrid"></table>
         <div id="jqGridPager"></div>
     </div>
-
-    <div v-show="showLog" class="panel panel-default">
-        <div class="panel-heading">运行日志</div>
-        <div>
-            <pre>
-                {{logContent}}
-            </pre>
-        </div>
-        <input type="button" class="btn btn-warning" @click="reload" value="返回"/>
-    </div>
-
     <div v-show="showEdit" class="panel panel-default">
         <div class="panel-heading">{{title}}</div>
         <form class="form-horizontal">

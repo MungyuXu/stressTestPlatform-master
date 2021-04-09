@@ -202,32 +202,6 @@ public class StressTestFileController {
         }
     }
 
-    @SysLog("获取执行日志")
-    @RequestMapping("/getRunLog/{fileId}")
-    public R getRunLog(@PathVariable("fileId") Long fileId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("", fileId);
-        List<StressTestReportsEntity> stressTestReportsEntity = stressTestReportsService.queryList(map);
-        String path = stressTestReportsEntity.get(0).getLogPath();
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            String temp = "";
-            File file = new File(path);
-            FileReader fileReader = new FileReader(file);
-            BufferedReader br = new BufferedReader(fileReader);
-            while ((temp = br.readLine()) != null) {
-                // 拼接换行符
-                sb.append(temp + "\n");
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return R.ok().put("logContent", sb.toString());
-    }
-
     @RequestMapping(value = "/sendMsg", method = RequestMethod.POST)
     public Object sendMsg(@RequestBody JSONObject reqBody) {
         WeChatUtils weChatUtils = new WeChatUtils();

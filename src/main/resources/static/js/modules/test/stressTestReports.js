@@ -46,7 +46,8 @@ $(function () {
                 label: '执行操作', name: '', width: 80, sortable: false, formatter: function (value, options, row) {
                     var createReportBtn = "<a href='#' class='btn btn-primary' onclick='createReport(" + row.reportId + ")' ><i class='fa fa-plus'></i>&nbsp;生成报告</a>";
                     var downloadReportBtn = "&nbsp;&nbsp;<a href='" + baseURL + "test/stressReports/downloadReport/" + row.reportId + "' class='btn btn-primary' onclick='return checkStatus(" + row.status + ")'><i class='fa fa-download'></i>&nbsp;下载</a>";
-                    return createReportBtn + downloadReportBtn;
+                    var logBtn = "&nbsp;&nbsp;<a href='#' class='btn btn-primary' onclick='viewLog(" + row.reportId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;日志</a>";
+                    return createReportBtn + downloadReportBtn + logBtn;
                 }
             }
             // 当前不做更新，页面复杂性价比不高。
@@ -87,7 +88,10 @@ var vm = new Vue({
         },
         stressCaseReport: {},
         title: null,
-        showList: true
+        showList: true,
+        showLog: false,
+        logContent: '',
+        showEdit: false
     },
     methods: {
         query: function () {
@@ -136,6 +140,8 @@ var vm = new Vue({
 
             $.get(baseURL + "test/stressReports/info/" + reportId, function (r) {
                 vm.showList = false;
+                vm.showEdit = true;
+                vm.showLog = false;
                 vm.title = "修改";
                 vm.stressCaseReport = r.stressCaseReport;
             });
@@ -193,6 +199,8 @@ var vm = new Vue({
         },
         reload: function (event) {
             vm.showList = true;
+            vm.showEdit = false;
+            vm.showLog = false;
             var page = $("#jqGrid").jqGrid('getGridParam', 'page');
             $("#jqGrid").jqGrid('setGridParam', {
                 postData: {'caseId': vm.q.caseId},
@@ -229,6 +237,23 @@ function createReport(reportIds) {
         }
     });
     // });
+}
+
+function viewLog(reportId) {
+    $.ajax({
+        type: "GET",
+        url: baseURL + "/test/stressReports/getRunLog/" + reportId,
+        success: function (r) {
+            if (r.code == 0) {
+                vm.showList = false;
+                vm.showLog = true;
+                vm.showEdit = false;
+                vm.logContent = r.logContent;
+            } else {
+                alert(r.msg)
+            }
+        }
+    });
 }
 
 function checkStatus(status) {

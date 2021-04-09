@@ -104,12 +104,11 @@ $(function () {
                         } else {
                             btn = "<a href='#' class='btn btn-primary' onclick='runOnce(" + row.fileId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;启动</a>";
                         }
-                        logBtn = "&nbsp;&nbsp;<a href='#' class='btn btn-primary' onclick='viewLog(" + row.fileId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;日志</a>";
                     }
                     // var stopBtn = "<a href='#' class='btn btn-primary' onclick='stop(" + row.fileId + ")' ><i class='fa fa-stop'></i>&nbsp;停止</a>";
                     // var stopNowBtn = "<a href='#' class='btn btn-primary' onclick='stopNow(" + row.fileId + ")' ><i class='fa fa-times-circle'></i>&nbsp;强制停止</a>";
                     var downloadFileBtn = "&nbsp;&nbsp;<a href='" + baseURL + "test/stressFile/downloadFile/" + row.fileId + "' class='btn btn-primary'><i class='fa fa-download'></i>&nbsp;下载</a>";
-                    return btn + downloadFileBtn + logBtn;
+                    return btn + downloadFileBtn;
                 }
             }
         ],
@@ -151,8 +150,6 @@ var vm = new Vue({
         showChart: false,
         showList: true,
         showEdit: false,
-        showLog: false,
-        logContent: ""
     },
     methods: {
         query: function () {
@@ -170,7 +167,6 @@ var vm = new Vue({
             vm.showList = false;
             vm.showChart = false;
             vm.showEdit = true;
-            vm.showLog = false;
             vm.title = "配置";
             if (fileIds.length > 1) {
                 vm.stressTestFile.reportStatus = 0;
@@ -275,7 +271,6 @@ var vm = new Vue({
             vm.showChart = false;
             vm.showList = true;
             vm.showEdit = false;
-            vm.showLog = false;
             var page = $("#jqGrid").jqGrid('getGridParam', 'page');
             $("#jqGrid").jqGrid('setGridParam', {
                 postData: {'caseId': vm.q.caseId},
@@ -295,24 +290,6 @@ var vm = new Vue({
         }
     }
 });
-
-function viewLog(fileId) {
-    $.ajax({
-        type: "GET",
-        url: baseURL + "/test/stressFile/getRunLog/" + fileId,
-        success: function (r) {
-            if (r.code == 0) {
-                vm.showChart = false;
-                vm.showList = false;
-                vm.showEdit = false;
-                vm.showLog = true;
-                vm.logContent = r.logContent;
-            } else {
-                alert(r.msg)
-            }
-        }
-    });
-}
 
 function runOnce(fileIds) {
     if (!fileIds) {

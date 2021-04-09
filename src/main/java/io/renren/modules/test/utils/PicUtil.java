@@ -36,7 +36,18 @@ public class PicUtil {
         //打开页面
 
         driver.get(htmlFilePath);
-        JavascriptExecutor js = driver;
+
+//        try {
+//            Thread.sleep(30 * 1000);
+//            JavascriptExecutor js = driver;
+//            for (int i = 0; i < 33; i++) {
+//                js.executeScript("window.scrollBy(0,1000)");
+//                //睡眠10s等js加载完成
+//                Thread.sleep(5 * 1000);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         //利用FileUtils工具类的copyFile()方法保存getScreenshotAs()返回的文件对象

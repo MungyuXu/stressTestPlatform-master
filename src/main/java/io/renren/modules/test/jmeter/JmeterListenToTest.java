@@ -95,8 +95,7 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
             log.error("Error generating the report", e);
         }
         checkForRemainingThreads();
-        JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
-        jmeterRunEntity.setTestEndTime(System.currentTimeMillis());
+        //JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
         updateEndStatus();
         log.error("... end of run");
     }
@@ -223,14 +222,14 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         //发送邮件通知
         sendReport(jmeterRunEntity);
 
-        //生成执行日志
-        generateRunLog(jmeterRunEntity);
-
         //发送企业微信通知
         String msg = "请查看性能测试结果：\nhttps://qa.gaodunwangxiao.com/renren-fast/index.html#modules/test/stressTestReports.html";
         WeChatUtils weChatUtils = new WeChatUtils();
         weChatUtils.sendMessage(jmeterRunEntity.getStressTestFile().getAddBy(), msg);
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
+        //生成执行日志
+        jmeterRunEntity.setTestEndTime(System.currentTimeMillis());
+        //generateRunLog(jmeterRunEntity);
     }
 
     private void sendReport(JmeterRunEntity jmeterRunEntity) {
@@ -272,23 +271,29 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
 
         String picPath = basePath + System.currentTimeMillis() + ".png";
         System.out.println(basePath.replace("\\", "/") + "index.html");
-        PicUtil.transferHtmlToPic("file:///:" + basePath.replace("\\", "/") + "index.html", picPath);
+
+        String baseFilePath = basePath.replace("\\", "/");
+        if (System.getProperty("os.name").contains("Windows")) {
+            baseFilePath = "file:///" + basePath.replace("\\", "/");
+        }
+
+        PicUtil.transferHtmlToPic(baseFilePath + "index.html", picPath);
         stressTestReportsService.sendMailWithPic(picPath, receiverList, emailTile, owner, "");
     }
 
-    private void generateRunLog(JmeterRunEntity jmeterRunEntity) {
-        String reportFilePath = jmeterRunEntity.getStressTestReports().getReportName();
-        StressTestUtils stressTestUtils = new StressTestUtils();
-        String basePath = stressTestUtils.getCasePath()  + "\\" + new File(reportFilePath).getPath().replace(".csv", "\\");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String startTime = format.format(jmeterRunEntity.getTestStartTime());
-        String endTime = format.format(jmeterRunEntity.getTestEndTime());
-        String logPath = "/home/seven.chen/pts/renren-fast.log";
-        String newLogPath = basePath.replace("\\", "/") + "run.log";
-        System.out.println("日志路径为" + newLogPath);
-        LogUtils.getSpecifiedLog(startTime, endTime, logPath, newLogPath);
-
-        StressTestReportsEntity stressTestReportsEntity = jmeterRunEntity.getStressTestReports();
-        stressTestReportsEntity.setLogPath(logPath);
-    }
+//    private void generateRunLog(JmeterRunEntity jmeterRunEntity) {
+//        String reportFilePath = jmeterRunEntity.getStressTestReports().getReportName();
+//        StressTestUtils stressTestUtils = new StressTestUtils();
+//        String basePath = stressTestUtils.getCasePath()  + "\\" + new File(reportFilePath).getPath().replace(".csv", "\\");
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        String startTime = format.format(jmeterRunEntity.getTestStartTime());
+//        String endTime = format.format(jmeterRunEntity.getTestEndTime());
+//        String logPath = "/home/seven.chen/pts/renren-fast.log";
+//        String newLogPath = basePath.replace("\\", "/") + "run.log";
+//        System.out.println("日志路径为" + newLogPath);
+//        LogUtils.getSpecifiedLog(startTime, endTime, logPath, newLogPath);
+//
+//        StressTestReportsEntity stressTestReportsEntity = jmeterRunEntity.getStressTestReports();
+//        stressTestReportsEntity.setLogPath(newLogPath);
+//    }
 }
