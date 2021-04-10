@@ -223,9 +223,8 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         sendReport(jmeterRunEntity);
 
         //发送企业微信通知
-        String msg = "您发起的性能测试 " + jmeterRunEntity.getStressTestFile().getCaseName() + " 已完成，请前往平台查看结果";
-        WeChatUtils weChatUtils = new WeChatUtils();
-        weChatUtils.sendMessage(jmeterRunEntity.getStressTestFile().getAddBy(), msg);
+        sendWechatMsg(jmeterRunEntity);
+
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
         //生成执行日志
         jmeterRunEntity.setTestEndTime(System.currentTimeMillis());
@@ -284,6 +283,14 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
             log.error("html 报告转化成图片失败");
             e.printStackTrace();
         }
+    }
+
+    private void sendWechatMsg(JmeterRunEntity jmeterRunEntity) {
+        StressTestFileEntity stressTestFileEntity = jmeterRunEntity.getStressTestFile();
+        StressTestEntity stressTestEntity = stressTestService.queryObject(stressTestFileEntity.getCaseId());
+        String msg = "您发起的性能测试 " + stressTestEntity.getCaseName() + " 已完成，请前往平台查看结果";
+        WeChatUtils weChatUtils = new WeChatUtils();
+        weChatUtils.sendMessage(jmeterRunEntity.getStressTestFile().getAddBy(), msg);
     }
 
 //    private void generateRunLog(JmeterRunEntity jmeterRunEntity) {

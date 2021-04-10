@@ -14,3 +14,4 @@ temp/
 #doc/*.txt
 jmeter.log
 *.iml
+phantomjsdriver.log

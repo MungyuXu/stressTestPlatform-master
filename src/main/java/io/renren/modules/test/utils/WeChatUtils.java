@@ -110,7 +110,7 @@ public class WeChatUtils {
      **/
     public ResponseEntity<JSONObject> sendMessage(String email, String msg) throws JSONException  {
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
-        String descriptionContent = "<div class=\"gray\">" + time + "</div> <div class=\"normal\">你好，"+
+        String descriptionContent = "<div class=\"gray\">" + time + "</div> <div class=\"normal\">您好，"+
                 email.replace("@gaodun.com", "").replace(".", " ") +
                 "</div><div class=\"highlight\">"+ msg +"</div>";
 
