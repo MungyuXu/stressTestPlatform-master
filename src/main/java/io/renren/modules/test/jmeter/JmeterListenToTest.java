@@ -223,7 +223,7 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         sendReport(jmeterRunEntity);
 
         //发送企业微信通知
-        String msg = "请查看性能测试结果：\nhttps://qa.gaodunwangxiao.com/renren-fast/index.html#modules/test/stressTestReports.html";
+        String msg = "您发起的性能测试 " + jmeterRunEntity.getStressTestFile().getCaseName() + " 已完成，请前往平台查看结果";
         WeChatUtils weChatUtils = new WeChatUtils();
         weChatUtils.sendMessage(jmeterRunEntity.getStressTestFile().getAddBy(), msg);
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
@@ -277,8 +277,13 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
             baseFilePath = "file:///" + basePath.replace("\\", "/");
         }
 
-        PicUtil.transferHtmlToPic(baseFilePath + "index.html", picPath);
-        stressTestReportsService.sendMailWithPic(picPath, receiverList, emailTile, owner, "");
+        try {
+            PicUtil.transferHtmlToPic(baseFilePath + "index.html", picPath);
+            stressTestReportsService.sendMailWithPic(picPath, receiverList, emailTile, owner, "");
+        } catch (Exception e) {
+            log.error("html 报告转化成图片失败");
+            e.printStackTrace();
+        }
     }
 
 //    private void generateRunLog(JmeterRunEntity jmeterRunEntity) {

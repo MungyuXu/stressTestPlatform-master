@@ -122,6 +122,10 @@ public class SysLoginController extends AbstractController {
             }
         }
 
+        if (user == null) {
+            return R.error("用户不存在");
+        }
+
         //账号锁定
         if (user.getStatus() == 0) {
             return R.error("账号已被锁定,请联系管理员");

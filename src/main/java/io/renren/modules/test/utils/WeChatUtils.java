@@ -9,6 +9,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class WeChatUtils {
 
     private RestTemplate restTemplate = new RestTemplate();
@@ -106,15 +109,23 @@ public class WeChatUtils {
      *发送压测结束消息给压测发起人
      **/
     public ResponseEntity<JSONObject> sendMessage(String email, String msg) throws JSONException  {
-        JSONObject textContent = new JSONObject();
-        textContent.put("content", msg);
+        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
+        String descriptionContent = "<div class=\"gray\">" + time + "</div> <div class=\"normal\">你好，"+
+                email.replace("@gaodun.com", "").replace(".", " ") +
+                "</div><div class=\"highlight\">"+ msg +"</div>";
+
+        JSONObject textCardContent = new JSONObject();
+        textCardContent.put("title", "高顿性能测试平台通知");
+        textCardContent.put("description", descriptionContent);
+        textCardContent.put("url", "https://qa.gaodunwangxiao.com/renren-fast/index.html#modules/test/stressTestReports.html");
+        textCardContent.put("btntxt", "查看");
 
         JSONObject reqBody = new JSONObject();
-        reqBody.put("msgtype", "text");
+        reqBody.put("msgtype", "textcard");
         reqBody.put("safe", "0");
         reqBody.put("agentid", 1000201);
         reqBody.put("touser", getSpecifiedUserId(email));
-        reqBody.put("text", textContent);
+        reqBody.put("textcard", textCardContent);
 
         String url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="+ accessToken +"";
 
