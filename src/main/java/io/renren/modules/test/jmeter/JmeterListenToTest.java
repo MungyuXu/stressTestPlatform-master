@@ -2,11 +2,10 @@ package io.renren.modules.test.jmeter;
 
 import io.renren.modules.test.entity.StressTestEntity;
 import io.renren.modules.test.entity.StressTestFileEntity;
-import io.renren.modules.test.entity.StressTestReportsEntity;
+import io.renren.modules.test.log.LogAppender;
 import io.renren.modules.test.service.StressTestFileService;
 import io.renren.modules.test.service.StressTestReportsService;
 import io.renren.modules.test.service.StressTestService;
-import io.renren.modules.test.utils.LogUtils;
 import io.renren.modules.test.utils.PicUtil;
 import io.renren.modules.test.utils.StressTestUtils;
 import io.renren.modules.test.utils.WeChatUtils;
@@ -21,10 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,18 +51,22 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
 
     private final Long fileId;
 
+    private final LogAppender logAppender;
+
     /**
      * @param engines         List<JMeterEngine>
      * @param reportGenerator {@link ReportGenerator}
      */
     public JmeterListenToTest(List<JMeterEngine> engines, ReportGenerator reportGenerator,
-                              StressTestFileService stressTestFileService, Long fileId, StressTestService stressTestService, StressTestReportsService stressTestReportsService) {
+                              StressTestFileService stressTestFileService, Long fileId, StressTestService stressTestService,
+                              StressTestReportsService stressTestReportsService, LogAppender logAppender) {
         this.engines = engines;
         this.reportGenerator = reportGenerator;
         this.stressTestFileService = stressTestFileService;
         this.fileId = fileId;
         this.stressTestReportsService = stressTestReportsService;
         this.stressTestService = stressTestService;
+        this.logAppender = logAppender;
     }
 
     @Override
@@ -98,6 +98,7 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         //JmeterRunEntity jmeterRunEntity = StressTestUtils.jMeterEntity4file.get(fileId);
         updateEndStatus();
         log.error("... end of run");
+        logAppender.stop();
     }
 
     @Override

@@ -13,6 +13,7 @@ import io.renren.modules.test.jmeter.JmeterRunEntity;
 import io.renren.modules.test.jmeter.JmeterStatEntity;
 import io.renren.modules.test.jmeter.engine.LocalStandardJMeterEngine;
 import io.renren.modules.test.jmeter.runner.LocalDistributedRunner;
+import io.renren.modules.test.log.LogAppender;
 import io.renren.modules.test.service.StressTestFileService;
 import io.renren.modules.test.service.StressTestReportsService;
 import io.renren.modules.test.service.StressTestService;
@@ -59,6 +60,7 @@ public class StressTestFileServiceImpl implements StressTestFileService {
     private static final String OS_NAME = System.getProperty("os.name");// $NON-NLS-1$
     private static final String OS_NAME_LC = OS_NAME.toLowerCase(java.util.Locale.ENGLISH);
     private static final String JMETER_INSTALLATION_DIRECTORY;
+    private LogAppender logAppender;
 
     /**
      * 增加了一个static代码块，本身是从Jmeter的NewDriver源码中复制过来的。
@@ -365,6 +367,12 @@ public class StressTestFileServiceImpl implements StressTestFileService {
 
             SysUserEntity sysUserEntity = (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
             stressTestReports.setAddBy(sysUserEntity.getEmail());
+            String logPath = casePath + File.separator + jmxDir + File.separator + csvName.replace(".csv", ".log");
+            stressTestReports.setLogPath(logPath);
+
+            //生成执行日志文件
+            logAppender = new LogAppender(logPath);
+            logAppender.start();
         }
 
         Map map = new HashMap();
@@ -529,7 +537,7 @@ public class StressTestFileServiceImpl implements StressTestFileService {
             // engines 为null停止脚本后不会直接停止远程client的JVM进程。
             // reportGenerator 为null停止后脚本后不会直接生成测试报告。
             jmxTree.add(jmxTree.getArray()[0], new JmeterListenToTest(null,
-                    null, this, stressTestFile.getFileId(), stressTestService, stressTestReportsService));
+                    null, this, stressTestFile.getFileId(), stressTestService, stressTestReportsService, logAppender));
 
             // Used for remote notification of threads start/stop,see BUG 54152
             // Summariser uses this feature to compute correctly number of threads

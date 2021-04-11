@@ -8,7 +8,6 @@ import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.test.entity.StressTestReportsEntity;
 import io.renren.modules.test.service.StressTestReportsService;
-import io.renren.modules.test.utils.LogUtils;
 import io.renren.modules.test.utils.StressTestUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,15 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -161,21 +153,18 @@ public class StressTestReportsController {
     public R getRunLog(@PathVariable("reportId") Long reportId) {
         StressTestReportsEntity stressTestReportsEntity = stressTestReportsService.queryObject(reportId);
         String content = "没有日志";
+        String logPath = stressTestReportsEntity.getLogPath();
 
-        String runLogPath = "/home/seven.chen/pts/renren-fast.log";
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-        Date current = new Date();
-        Date start = stressTestReportsEntity.getAddTime();
-        Date end = stressTestReportsEntity.getUpdateTime();
-
-        String currentTime = dateFormat.format(current.getTime() + 60000);
-        String startTime = dateFormat.format(start);
-        String endTime = dateFormat.format(end.getTime() + 60000);
-        if (current.getTime() > end.getTime()) {
-            content = LogUtils.getSpecifiedLog(startTime, endTime, runLogPath);
-        } else if (current.getTime() < end.getTime() && current.getTime() > start.getTime()) {
-            content = LogUtils.getSpecifiedLog(startTime, currentTime, runLogPath);
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(logPath)));
+            StringBuffer sb = new StringBuffer();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            content = sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return R.ok().put("logContent", content);
