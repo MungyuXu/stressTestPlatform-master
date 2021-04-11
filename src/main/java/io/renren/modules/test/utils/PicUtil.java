@@ -1,13 +1,11 @@
 package io.renren.modules.test.utils;
 
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import javax.annotation.Resources;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +34,7 @@ public class PicUtil {
         //打开页面
 
         driver.get(htmlFilePath);
-
+        //当报告比较长的时候可以用以下代码滚动截屏
 //        try {
 //            Thread.sleep(30 * 1000);
 //            JavascriptExecutor js = driver;
@@ -52,7 +50,6 @@ public class PicUtil {
         File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         //利用FileUtils工具类的copyFile()方法保存getScreenshotAs()返回的文件对象
         try {
-            System.out.println("图片路径" + picPath);
             FileUtils.copyFile(srcFile, new File(picPath));
         } catch (IOException e) {
             e.printStackTrace();

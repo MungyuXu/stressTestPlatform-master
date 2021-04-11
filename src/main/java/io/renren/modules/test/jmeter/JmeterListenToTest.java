@@ -263,14 +263,12 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
             }
         }
 
-        System.out.println("基本路径为：" + basePath);
         if (!new File(basePath).exists()) {
             log.error("生成报告失败");
             return;
         }
 
         String picPath = basePath + System.currentTimeMillis() + ".png";
-        System.out.println(basePath.replace("\\", "/") + "index.html");
 
         String baseFilePath = basePath.replace("\\", "/");
         if (System.getProperty("os.name").contains("Windows")) {
@@ -293,20 +291,4 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         WeChatUtils weChatUtils = new WeChatUtils();
         weChatUtils.sendMessage(jmeterRunEntity.getStressTestFile().getAddBy(), msg);
     }
-
-//    private void generateRunLog(JmeterRunEntity jmeterRunEntity) {
-//        String reportFilePath = jmeterRunEntity.getStressTestReports().getReportName();
-//        StressTestUtils stressTestUtils = new StressTestUtils();
-//        String basePath = stressTestUtils.getCasePath()  + "\\" + new File(reportFilePath).getPath().replace(".csv", "\\");
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        String startTime = format.format(jmeterRunEntity.getTestStartTime());
-//        String endTime = format.format(jmeterRunEntity.getTestEndTime());
-//        String logPath = "/home/seven.chen/pts/renren-fast.log";
-//        String newLogPath = basePath.replace("\\", "/") + "run.log";
-//        System.out.println("日志路径为" + newLogPath);
-//        LogUtils.getSpecifiedLog(startTime, endTime, logPath, newLogPath);
-//
-//        StressTestReportsEntity stressTestReportsEntity = jmeterRunEntity.getStressTestReports();
-//        stressTestReportsEntity.setLogPath(newLogPath);
-//    }
 }

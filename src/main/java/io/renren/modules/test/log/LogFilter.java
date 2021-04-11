@@ -9,9 +9,7 @@ import ch.qos.logback.core.spi.FilterReply;
 public class LogFilter extends Filter<ILoggingEvent> {
     @Override
     public FilterReply decide(ILoggingEvent event) {
-        if (event.getLoggerName().contains("smbj") && event.getLevel() == Level.INFO) {
-            return FilterReply.DENY;
-        } else if (event.getLevel() == Level.DEBUG) {
+        if (event.getLevel() == Level.DEBUG) {
             return FilterReply.DENY;
         } else {
             return FilterReply.ACCEPT;
