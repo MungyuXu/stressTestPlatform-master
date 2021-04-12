@@ -44,10 +44,10 @@ $(function () {
             },
             {
                 label: '执行操作', name: '', width: 80, sortable: false, formatter: function (value, options, row) {
-                    var createReportBtn = "<a href='#' class='btn btn-primary' onclick='createReport(" + row.reportId + ")' ><i class='fa fa-plus'></i>&nbsp;生成报告</a>";
+                    //var createReportBtn = "<a href='#' class='btn btn-primary' onclick='createReport(" + row.reportId + ")' ><i class='fa fa-plus'></i>&nbsp;生成报告</a>";
                     var downloadReportBtn = "&nbsp;&nbsp;<a href='" + baseURL + "test/stressReports/downloadReport/" + row.reportId + "' class='btn btn-primary' onclick='return checkStatus(" + row.status + ")'><i class='fa fa-download'></i>&nbsp;下载</a>";
                     var logBtn = "&nbsp;&nbsp;<a href='#' class='btn btn-primary' onclick='viewLog(" + row.reportId + ")' ><i class='fa fa-arrow-circle-right'></i>&nbsp;日志</a>";
-                    return createReportBtn + downloadReportBtn + logBtn;
+                    return downloadReportBtn + logBtn;
                 }
             }
             // 当前不做更新，页面复杂性价比不高。
