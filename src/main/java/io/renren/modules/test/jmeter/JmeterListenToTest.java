@@ -239,6 +239,10 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
         String emailTile = stressTestEntity.getCaseName() + "性能测试结果";
         String[] receiverList = stressTestEntity.getEmailListStr().replaceAll(" ", "").split(",");
 
+        if (receiverList.length == 0) {
+            return;
+        }
+
         Long reportId = jmeterRunEntity.getStressTestReports().getReportId();
 
         try {
