@@ -11,14 +11,14 @@ import java.util.List;
 
 /**
  * 系统用户
- * 
+ *
  * @author chenshun
  * @email sunlightcs@gmail.com
  * @date 2016年9月18日 上午9:28:55
  */
 public class SysUserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * 用户ID
 	 */
@@ -44,8 +44,7 @@ public class SysUserEntity implements Serializable {
 	/**
 	 * 邮箱
 	 */
-	@NotBlank(message="邮箱不能为空", groups = {AddGroup.class, UpdateGroup.class})
-	@Email(message="邮箱格式不正确", groups = {AddGroup.class, UpdateGroup.class})
+	@NotBlank(message="用户名不能为空", groups = {AddGroup.class, UpdateGroup.class})
 	private String email;
 
 	/**
@@ -57,12 +56,12 @@ public class SysUserEntity implements Serializable {
 	 * 状态  0：禁用   1：正常
 	 */
 	private Integer status;
-	
+
 	/**
 	 * 角色ID列表
 	 */
 	private List<Long> roleIdList;
-	
+
 	/**
 	 * 创建者ID
 	 */
@@ -75,7 +74,7 @@ public class SysUserEntity implements Serializable {
 
 	/**
 	 * 设置：
-	 * @param userId 
+	 * @param userId
 	 */
 	public void setUserId(Long userId) {
 		this.userId = userId;
@@ -88,7 +87,7 @@ public class SysUserEntity implements Serializable {
 	public Long getUserId() {
 		return userId;
 	}
-	
+
 	/**
 	 * 设置：用户名
 	 * @param username 用户名
@@ -104,7 +103,7 @@ public class SysUserEntity implements Serializable {
 	public String getUsername() {
 		return username;
 	}
-	
+
 	/**
 	 * 设置：密码
 	 * @param password 密码
@@ -120,7 +119,7 @@ public class SysUserEntity implements Serializable {
 	public String getPassword() {
 		return password;
 	}
-	
+
 	/**
 	 * 设置：邮箱
 	 * @param email 邮箱
@@ -136,7 +135,7 @@ public class SysUserEntity implements Serializable {
 	public String getEmail() {
 		return email;
 	}
-	
+
 	/**
 	 * 设置：手机号
 	 * @param mobile 手机号
@@ -152,7 +151,7 @@ public class SysUserEntity implements Serializable {
 	public String getMobile() {
 		return mobile;
 	}
-	
+
 	/**
 	 * 设置：状态  0：禁用   1：正常
 	 * @param status 状态  0：禁用   1：正常
@@ -168,7 +167,7 @@ public class SysUserEntity implements Serializable {
 	public Integer getStatus() {
 		return status;
 	}
-	
+
 	/**
 	 * 设置：创建时间
 	 * @param createTime 创建时间
