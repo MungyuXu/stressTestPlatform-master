@@ -29,9 +29,6 @@ public class StressTestSlaveController {
     private StressTestSlaveService stressTestSlaveService;
 
     @Autowired
-    private StressTestUtils stressTestUtils;
-
-    @Autowired
     private StressTestFileService stressTestFileService;
 
     /**

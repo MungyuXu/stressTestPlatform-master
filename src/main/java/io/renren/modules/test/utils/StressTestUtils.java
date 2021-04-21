@@ -15,7 +15,6 @@ import org.apache.jmeter.util.JMeterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -30,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  */
 //@ConfigurationProperties(prefix = "test.stress")
 @Component
-@Service
 public class StressTestUtils {
 
     Logger logger = LoggerFactory.getLogger(getClass());
