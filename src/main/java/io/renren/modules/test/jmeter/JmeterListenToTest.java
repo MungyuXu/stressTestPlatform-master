@@ -220,11 +220,13 @@ public class JmeterListenToTest implements TestStateListener, Runnable, Remoteab
 
         //实际上已经完全停止，则使用立即停止的方式，会打断Jmeter执行的线程
 
-        //发送邮件通知
-        sendReport(jmeterRunEntity);
+        if (StressTestUtils.NEED_DEBUG.equals(jmeterRunEntity.getStressTestFile().getDebugStatus())) {
+            //发送邮件通知
+            sendReport(jmeterRunEntity);
 
-        //发送企业微信通知
-        sendWechatMsg(jmeterRunEntity);
+            //发送企业微信通知
+            sendWechatMsg(jmeterRunEntity);
+        }
 
         stressTestFileService.stopLocal(fileId, jmeterRunEntity, true);
         //生成执行日志
