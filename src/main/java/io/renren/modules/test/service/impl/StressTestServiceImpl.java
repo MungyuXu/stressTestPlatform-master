@@ -27,9 +27,6 @@ public class StressTestServiceImpl implements StressTestService {
     private StressTestDao stressTestDao;
 
     @Autowired
-    private StressTestFileDao stressTestFileDao;
-
-    @Autowired
     private StressTestReportsDao stressTestReportsDao;
 
     @Autowired

@@ -53,8 +53,6 @@ import java.util.*;
 @Service("stressTestFileService")
 public class StressTestFileServiceImpl implements StressTestFileService {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     private static final String JAVA_CLASS_PATH = "java.class.path";
     private static final String CLASSPATH_SEPARATOR = File.pathSeparator;
     private static final String OS_NAME = System.getProperty("os.name");// $NON-NLS-1$

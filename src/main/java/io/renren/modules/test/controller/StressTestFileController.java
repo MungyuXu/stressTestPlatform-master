@@ -43,9 +43,6 @@ public class StressTestFileController {
     @Autowired
     private StressTestFileService stressTestFileService;
 
-    @Autowired
-    private StressTestReportsService stressTestReportsService;
-
     /**
      * 参数化文件，用例文件列表
      */

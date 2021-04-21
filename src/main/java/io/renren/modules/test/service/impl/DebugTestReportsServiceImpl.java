@@ -32,8 +32,6 @@ import java.util.Map;
 @Service("debugTestReportsService")
 public class DebugTestReportsServiceImpl implements DebugTestReportsService {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     @Autowired
     private DebugTestReportsDao debugTestReportsDao;
 
