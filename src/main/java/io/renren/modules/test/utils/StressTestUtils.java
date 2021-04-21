@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 //@ConfigurationProperties(prefix = "test.stress")
 @Component
-@DependsOn("sysConfigService")
+@DependsOn("SpringContextUtils")
 public class StressTestUtils {
 
     Logger logger = LoggerFactory.getLogger(getClass());
