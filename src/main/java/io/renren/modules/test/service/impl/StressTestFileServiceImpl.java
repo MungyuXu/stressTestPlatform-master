@@ -350,8 +350,10 @@ public class StressTestFileServiceImpl implements StressTestFileService {
         StressTestReportsEntity stressTestReports = null;
         if (StressTestUtils.NEED_REPORT.equals(stressTestFile.getReportStatus())) {
             // 如果是需要调试的情况下
+            String logPath = casePath + File.separator + jmxDir + File.separator + csvName.replace(".csv", ".log");
             if (StressTestUtils.NEED_DEBUG.equals(stressTestFile.getDebugStatus())) {
                 stressTestReports = new DebugTestReportsEntity();
+                logPath = casePath + File.separator + jmxDir + File.separator + csvName.replace(".jtl", ".log");
             } else {
                 stressTestReports = new StressTestReportsEntity();
             }
@@ -365,7 +367,7 @@ public class StressTestFileServiceImpl implements StressTestFileService {
 
             SysUserEntity sysUserEntity = (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
             stressTestReports.setAddBy(sysUserEntity.getEmail());
-            String logPath = casePath + File.separator + jmxDir + File.separator + csvName.replace(".csv", ".log");
+
             stressTestReports.setLogPath(logPath);
 
             //生成执行日志文件
