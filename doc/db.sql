@@ -373,7 +373,7 @@ CREATE TABLE `test_stress_case` (
   `project` varchar(50) COMMENT '所属项目',
   `module` varchar(50) COMMENT '所属模块',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态  0：禁用   1：正常',
-  `operator` varchar(20) COMMENT '拥有者名字',
+  `operator` varchar(200) COMMENT '拥有者名字',
   `remark` varchar(300) COMMENT '描述',
   `priority` int COMMENT '优先级用于过滤',
   `case_dir` varchar(200) COMMENT 'master节点保存用例信息的文件夹',
